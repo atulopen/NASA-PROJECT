@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const planetsRouter = require('./routes/planets/planets.router');
+const launchesRouter = require('./routes/launches/launches.router');
 const path = require('path');
 const morgan = require('morgan');
 
@@ -17,7 +18,8 @@ app.use(cors({
 
 app.use(express.static(path.join(__dirname, '..', 'public')))
 
-app.use('/planets', planetsRouter);
+app.use(planetsRouter);
+app.use(launchesRouter);
 
 
 app.get('/', (req, res) => {
