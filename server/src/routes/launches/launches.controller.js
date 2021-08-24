@@ -1,7 +1,21 @@
-const {getAllLaunches, addNewLaunch} = require('../../models/launches.model');
+const {getAllLaunches, addNewLaunch, abortLaunchById, existsLaunchById} = require('../../models/launches.model');
+const {response} = require("express");
 
 function httpGetAllLaunches(req, res) {
     return res.json(getAllLaunches());
+}
+
+function httpAbortLaunch(req, res) {
+    const id = req.params.id;
+
+    if (existsLaunchById(id)) {
+        return response.status(404).json({
+            error: 'Launch do not exist'
+        })
+    }
+
+    abortLaunchById(Number(req.params.id));
+    return res.status(200).end();
 }
 
 function httpAddNewLaunch(req, res) {
@@ -28,4 +42,5 @@ function httpAddNewLaunch(req, res) {
 module.exports = {
     httpGetAllLaunches,
     httpAddNewLaunch,
+    httpAbortLaunch,
 }
