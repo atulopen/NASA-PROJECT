@@ -1,8 +1,8 @@
 const {getAllLaunches, addNewLaunch, abortLaunchById, existsLaunchById} = require('../../models/launches.model');
 const {response} = require("express");
 
-function httpGetAllLaunches(req, res) {
-    return res.json(getAllLaunches());
+async function httpGetAllLaunches(req, res) {
+    return res.json(await getAllLaunches());
 }
 
 function httpAbortLaunch(req, res) {
