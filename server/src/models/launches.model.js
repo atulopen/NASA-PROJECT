@@ -2,12 +2,10 @@ const launches = new Map();
 const launchesDatabase = require('./launches.mongo');
 const planetsDatabase = require('./planets.mongo');
 
-let flightNumber = 100;
-
 const DEFAULT_FLIGHT_NUMBER = 100;
 
 const launch = {
-    flightNumber,
+    DEFAULT_FLIGHT_NUMBER,
     mission: 'Arthur Mission',
     rocket: 'Explorer IS1',
     launchDate: new Date('December 22, 2030'),
@@ -35,8 +33,10 @@ async function saveLaunch(launch) {
 }
 
 
-function existsLaunchById(id) {
-    return launches.has(id);
+async function existsLaunchWithId(launchId) {
+    return launchesDatabase.findOne({
+        flightNumber: launchId
+    });
 }
 
 async function getAllLaunches() {
@@ -60,21 +60,15 @@ async function scheduleNewLaunch(launch) {
     }
 }
 
-// function addNewLaunch(launch) {
-//     flightNumber++;
-//     launches.set(flightNumber, Object.assign(launch, {
-//         flightNumber,
-//         customer: ['ZTM', 'NASA'],
-//         upcoming: true,
-//         success: true,
-//     }));
-// }
+async function abortLaunchById(launchId) {
+    const aborted = launchesDatabase.updateOne({
+        flightNumber: launchId
+    }, {
+        success: false,
+        upcoming: false
+    });
 
-function abortLaunchById(id) {
-    const aborted = launches.get(id);
-    aborted.success = false;
-    aborted.upcoming = false;
-    return aborted;
+    return aborted.ok === 1 && aborted.nModified === 1;
 }
 
 async function getLatestFlightNumber() {
@@ -92,5 +86,5 @@ module.exports = {
     getAllLaunches,
     scheduleNewLaunch,
     abortLaunchById,
-    existsLaunchById,
+    isLaunchExists: existsLaunchWithId,
 }
